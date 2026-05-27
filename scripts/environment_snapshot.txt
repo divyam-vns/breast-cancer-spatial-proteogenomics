@@ -1,0 +1,9 @@
+
+# Environment snapshot for resume
+scanpy
+squidpy
+leidenalg
+igraph
+pandas
+numpy
+matplotlib
