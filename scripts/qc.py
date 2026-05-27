@@ -10,4 +10,7 @@ def run_qc(adata):
         inplace=True
     )
 
+    adata = adata[adata.obs['n_genes_by_counts'] > 200, :]
+    adata = adata[adata.obs['total_counts'] > 500, :]
+
     return adata
