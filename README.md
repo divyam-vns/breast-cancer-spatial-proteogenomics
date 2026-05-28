@@ -1,7 +1,7 @@
 
-# 🧬 Breast Cancer Spatial Proteogenomics
+#  Breast Cancer Spatial Proteogenomics
 
-## 🔬 Overview
+##  Overview
 End-to-end spatial transcriptomics analysis of breast cancer tissue using Scanpy + Squidpy.
 
 We identify:
@@ -12,7 +12,7 @@ We identify:
 
 ---
 
-## 🧪 Workflow
+##  Workflow
 
 ### 1. QC & Filtering
 - gene/spot filtering
@@ -42,7 +42,7 @@ We identify:
 
 ---
 
-## 📊 Key Outputs
+##  Key Outputs
 - QC plots
 - UMAP cluster maps
 - spatial tissue maps
@@ -51,7 +51,7 @@ We identify:
 
 ---
 
-## 🧠 Biological Insight
+##  Biological Insight
 Identified spatially distinct transcriptional domains showing:
 - metabolic heterogeneity
 - mitochondrial activity gradients
@@ -59,12 +59,12 @@ Identified spatially distinct transcriptional domains showing:
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 Scanpy · Squidpy · Pandas · Matplotlib · Python · Colab
 
 ---
 
-## 📂 Reproducibility
+##  Reproducibility
 All steps are reproducible via:
 - scripts/
 - notebooks/
