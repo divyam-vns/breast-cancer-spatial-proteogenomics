@@ -1,7 +1,8 @@
 
 import scanpy as sc
 
-def find_markers(adata):
+def marker_analysis(adata):
+
     sc.tl.rank_genes_groups(
         adata,
         groupby='leiden',
