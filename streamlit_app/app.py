@@ -28,7 +28,19 @@ def show_image(path, caption):
 
         try:
             img = Image.open(path)
-            st.image(img, caption=caption, width="stretch")
+
+            with st.expander(f"🔍 {caption}", expanded=True):
+
+                zoom = st.slider(
+                    f"Width: {caption}",
+                    min_value=300,
+                    max_value=1400,
+                    value=700,
+                    step=100,
+                    key=caption
+                )
+
+                st.image(img, caption=caption, width=zoom)
 
         except Exception as e:
             st.warning(f"Could not load {path}: {e}")
