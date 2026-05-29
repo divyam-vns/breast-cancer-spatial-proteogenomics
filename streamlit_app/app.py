@@ -9,20 +9,20 @@ st.title("🧬 Breast Cancer Spatial Transcriptomics Explorer")
 
 st.markdown(
 """
-Interactive visualization of:
-- QC metrics
+Integrated spatial multi-omics dashboard:
+- QC & preprocessing
 - Spatial clustering
-- Marker genes
-- Biomarkers
-- TME interactions
-- Ligand–Receptor signaling
-- Cell–Cell communication networks
+- Marker genes & biomarkers
+- TME (Tumor Microenvironment) analysis
+- Cell–cell communication
+- Pathway enrichment
+- Spatial functional modules
 """
 )
 
-# -----------------------------
-# SAFE IMAGE FUNCTION (WITH ZOOM)
-# -----------------------------
+# =========================================================
+# SAFE IMAGE DISPLAY WITH ZOOM
+# =========================================================
 def show_image(path, caption):
 
     if os.path.exists(path):
@@ -30,15 +30,15 @@ def show_image(path, caption):
         try:
             img = Image.open(path)
 
-            with st.expander(f"🔍 {caption}", expanded=True):
+            with st.expander(f"🔍 {caption}", expanded=False):
 
                 zoom = st.slider(
-                    f"Width: {caption}",
+                    f"Size: {caption}",
                     min_value=300,
                     max_value=1400,
                     value=800,
                     step=100,
-                    key=caption
+                    key=path
                 )
 
                 st.image(img, caption=caption, width=zoom)
@@ -49,136 +49,120 @@ def show_image(path, caption):
     else:
         st.warning(f"Missing file: {path}")
 
-# =====================================================
+
+# =========================================================
 # QC SECTION
-# =====================================================
+# =========================================================
 st.header("🧪 QC Metrics")
 
 show_image("results/figures/violin_qc_violin.png", "QC Violin Plot")
 show_image("results/figures/show_qc_spatial.png", "Spatial QC")
 
-# =====================================================
-# HVG SECTION
-# =====================================================
-st.header("📈 Highly Variable Genes")
+# =========================================================
+# HVG + PREPROCESSING
+# =========================================================
+st.header("📊 Highly Variable Genes")
 
-show_image("results/figures/filter_genes_dispersion_hvg.png", "HVG Plot")
+show_image("results/figures/filter_genes_dispersion_hvg.png", "HVG Selection")
 
-# =====================================================
+# =========================================================
 # CLUSTERING
-# =====================================================
+# =========================================================
 st.header("🧬 Spatial Clustering")
 
 show_image("results/figures/umap_umap_clusters.png", "UMAP Clusters")
 show_image("results/figures/show_spatial_clusters.png", "Spatial Clusters")
 
-# =====================================================
-# MARKER GENES
-# =====================================================
-st.header("🔬 Marker Genes")
+# =========================================================
+# MARKER GENES + BIOMARKERS
+# =========================================================
+st.header("🧠 Marker Genes & Biomarkers")
 
-show_image(
-    "results/figures/rank_genes_groups_leiden_marker_genes.png",
-    "Cluster Marker Genes"
-)
+show_image("results/figures/rank_genes_groups_leiden_marker_genes.png", "Marker Genes")
+show_image("results/figures/spatial_biomarker_example.png", "Spatial Biomarkers Example")
+show_image("results/figures/top_biomarker_spatial.png", "Top Biomarker Map")
 
-# =====================================================
-# SPATIAL BIOMARKERS
-# =====================================================
-st.header("🧫 Spatial Biomarkers")
-
+# Biomarker folder
 biomarker_dir = "results/figures/biomarkers"
-
 if os.path.exists(biomarker_dir):
+    for f in sorted(os.listdir(biomarker_dir)):
+        if f.endswith(".png"):
+            show_image(os.path.join(biomarker_dir, f), f)
 
-    biomarker_files = [
-        f for f in os.listdir(biomarker_dir)
-        if f.endswith(".png")
-    ]
+# =========================================================
+# PATHWAY ENRICHMENT (ALL CLUSTERS)
+# =========================================================
+st.header("🧬 Pathway Enrichment")
 
-    for f in sorted(biomarker_files):
-        show_image(os.path.join(biomarker_dir, f), f)
+show_image("results/figures/pathways_all_clusters_overview.png", "Pathway Overview")
+show_image("results/figures/pathways_summary_all_clusters.png", "Pathway Summary")
 
-else:
-    st.warning("Biomarker directory missing")
+pathway_dir = "results/figures/pathway_enrichment"
+if os.path.exists(pathway_dir):
+    for cluster in sorted(os.listdir(pathway_dir)):
+        cluster_path = os.path.join(pathway_dir, cluster)
+        if os.path.isdir(cluster_path):
+            st.subheader(f"Cluster {cluster}")
+            for f in sorted(os.listdir(cluster_path)):
+                if f.endswith(".png"):
+                    show_image(os.path.join(cluster_path, f), f)
 
-# =====================================================
-# TME ANALYSIS (NEW)
-# =====================================================
-st.header("🧠 Tumor Microenvironment (TME) Analysis")
+# =========================================================
+# TME ANALYSIS
+# =========================================================
+st.header("🧫 Tumor Microenvironment (TME)")
 
-tme_dir = "results/figures/tme"
+show_image("results/figures/tme_spatial_map.png", "TME Spatial Map")
+show_image("results/figures/tissue_domains.png", "Tissue Domains")
 
 tme_figs = [
-    ("tme_interaction_matrix.png", "TME Interaction Matrix"),
-    ("tme_cluster_scores.png", "TME Cluster Scores"),
-    ("tme_heatmap.png", "TME Heatmap")
+    "results/figures/tme_cluster_scores.png",
+    "results/figures/step9_spatial_feature_overlay.png",
+    "results/figures/show_step9_spatial_architecture.png"
 ]
 
-for f, cap in tme_figs:
-    show_image(os.path.join(tme_dir, f), cap)
+for f in tme_figs:
+    show_image(f, os.path.basename(f))
 
-# =====================================================
-# LIGAND–RECEPTOR SIGNALING (NEW)
-# =====================================================
-st.header("🔗 Ligand–Receptor Signaling")
+# =========================================================
+# CELL–CELL COMMUNICATION
+# =========================================================
+st.header("🔗 Cell–Cell Communication")
 
-lr_dir = "results/figures/ligand_receptor"
+show_image("results/figures/cell_communication/tme_interaction_matrix.png", "TME Interaction Matrix")
+show_image("results/figures/cell_communication/tme_neighborhood_enrichment.png", "Neighborhood Enrichment")
+show_image("results/figures/_cluster_interactions.png", "Cluster Interactions")
 
-lr_figs = [
-    ("lr_network.png", "Ligand–Receptor Network"),
-    ("lr_heatmap.png", "Ligand–Receptor Heatmap"),
-    ("lr_dotplot.png", "Ligand–Receptor Dotplot")
-]
-
-for f, cap in lr_figs:
-    show_image(os.path.join(lr_dir, f), cap)
-
-# =====================================================
-# CELL–CELL COMMUNICATION (NEW)
-# =====================================================
-st.header("🤝 Cell–Cell Communication")
-
-cc_dir = "results/figures/cell_communication"
-
-cc_figs = [
-    ("interaction_matrix.png", "Interaction Matrix"),
-    ("cluster_interactions.png", "Cluster Interaction Network"),
-    ("neighborhood_enrichment.png", "Neighborhood Enrichment")
-]
-
-for f, cap in cc_figs:
-    show_image(os.path.join(cc_dir, f), cap)
-
-# =====================================================
+# =========================================================
 # TABLES
-# =====================================================
-st.header("📊 Results Tables")
+# =========================================================
+st.header("📊 Data Tables")
 
 table_files = [
     "results/tables/qc_summary.csv",
     "results/tables/hvg_table.csv",
     "results/tables/cluster_marker_genes.csv",
     "results/tables/spatial_autocorr_genes.csv",
-    "results/tables/tme_cluster_scores.csv",
-    "results/tables/ligand_receptor_summary.csv",
-    "results/tables/interaction_matrix.csv"
+    "results/tables/top10_marker_genes_per_cluster.csv",
+    "results/tables/spatial_biomarkers_top10.csv",
+    "results/tables/figure_index.csv",
+    "results/tables/tme/cluster_scores_tme.csv",
+    "results/tables/tme/spot_tme_labels.csv",
+    "results/tables/tme/cluster_functional_annotation.csv",
+    "results/tables/pathways/top_pathways_per_cluster.csv",
+    "results/tables/cell_communication/tme_interaction_matrix.csv",
+    "results/tables/cell_communication/tme_nhood_enrichment_zscore.csv"
 ]
 
 for table in table_files:
-
     if os.path.exists(table):
-
         st.subheader(os.path.basename(table))
-
         df = pd.read_csv(table)
+        st.dataframe(df.head(30), use_container_width=True)
 
-        st.dataframe(df.head(20), use_container_width=True)
-
-# =====================================================
+# =========================================================
 # FOOTER
-# =====================================================
+# =========================================================
 st.markdown("---")
-st.markdown(
-"🧬 Spatial Transcriptomics Pipeline (Scanpy + Squidpy + TME + LR + Cell Communication)"
-)
+st.success("🚀 Full Spatial Multi-Omics Explorer Loaded")
+st.caption("Built with Scanpy + Squidpy + Pathway + TME + Cell Communication modules")
